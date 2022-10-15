@@ -239,7 +239,9 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
+          junit_files: |
+            "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
+            "/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
           comment_mode: off
 
       - name: Generate Test Report
@@ -533,7 +535,9 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
+          junit_files: |
+            "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
+            "/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
           comment_mode: off
 
       - name: Generate Test Report
@@ -690,7 +694,9 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
+          junit_files: |
+            "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
+            "/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
           comment_mode: off
 
       - name: Generate Test Report
