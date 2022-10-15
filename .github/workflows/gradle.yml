@@ -240,8 +240,8 @@ jobs:
         if: always()
         with:
           junit_files: |
-            '/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml'
-            '/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml'
+            /actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml
+            /actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml
           comment_mode: off
 
       - name: Generate Test Report
@@ -536,8 +536,8 @@ jobs:
         if: always()
         with:
           junit_files: |
-            '/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml'
-            '/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml'
+            /actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml
+            /actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml
           comment_mode: off
 
       - name: Generate Test Report
@@ -695,8 +695,8 @@ jobs:
         if: always()
         with:
           junit_files: |
-            '/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml'
-            '/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml'
+            /actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml
+            /actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml
           comment_mode: off
 
       - name: Generate Test Report
@@ -874,8 +874,8 @@ jobs:
 #        if: always()
 #        with:
 #          junit_files: |
-#            '/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml'
-#            '/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml'
+#            /actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml
+#            /actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml
 #          comment_mode: off
 #
 #      - name: Generate Test Report
