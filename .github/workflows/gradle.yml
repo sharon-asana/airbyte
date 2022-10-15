@@ -236,7 +236,7 @@ jobs:
         run: git --no-pager diff && test -z "$(git --no-pager diff)"
 
       - name: Generate Test Report
-        uses: cpdeethree/test-reporter@v1.0.2
+        uses: cpdeethree/test-reporter@v1.0.3
         if: always()
         with:
           name: Connectors Base Test Report
@@ -523,7 +523,7 @@ jobs:
         run: SUB_BUILD=PLATFORM ./gradlew :airbyte-tests:automaticMigrationAcceptanceTest --scan -i
 
       - name: Generate Test Report
-        uses: cpdeethree/test-reporter@v1.0.2
+        uses: cpdeethree/test-reporter@v1.0.3
         if: always()    # run this step even if previous step failed
         with:
           name: Platform Test Report with Docker E2E Test
@@ -673,7 +673,7 @@ jobs:
           CI=true IS_MINIKUBE=true ./tools/bin/acceptance_test_kube.sh
 
       - name: Generate Test Report
-        uses: cpdeethree/test-reporter@v1.0.2
+        uses: cpdeethree/test-reporter@v1.0.3
         if: always()    # run this step even if previous step failed
         with:
           name: Platform Kubernetes E2E Test Report
@@ -842,7 +842,7 @@ jobs:
 #        run: |
 #          CI=true IS_MINIKUBE=true ./tools/bin/acceptance_test_kube_helm.sh
 #      - name: Generate Test Report
-#        uses: cpdeethree/test-reporter@v1.0.2
+#        uses: cpdeethree/test-reporter@v1.0.3
 #        if: always()    # run this step even if previous step failed
 #        with:
 #          name: Platform Helm E2E Test Report
