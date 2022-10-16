@@ -239,10 +239,9 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: |
-            "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
-            "/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
+          junit_files: /actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml\n/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml
           comment_mode: off
+          json_file: connectors_base_results.json
 
       - name: Generate Test Report
         uses: cpdeethree/test-reporter@v1.0.3
@@ -535,10 +534,9 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: |
-            "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
-            "/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
+          junit_files: "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml\n/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
           comment_mode: off
+          json_file: platform_results.json
 
       - name: Generate Test Report
         uses: cpdeethree/test-reporter@v1.0.3
@@ -694,10 +692,9 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: |
-            "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"
-            "/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
+          junit_files: "/actions-runner/_work/airbyte/airbyte/*/build/test-results/*/*.xml"\n"/actions-runner/_work/airbyte/airbyte/*/*/build/test-results/*/*.xml"
           comment_mode: off
+          json_file: kube_results.json
 
       - name: Generate Test Report
         uses: cpdeethree/test-reporter@v1.0.3
