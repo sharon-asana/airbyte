@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+      "properties": {
+        "event": {
+          "type": "string"
+        },
+        "eventId": {
+          "type": "string"
+        },
+        "eventLabel": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "href": {
+              "type": "string"
+            },
+            "isExternal": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "label",
+            "href",
+            "isExternal"
+          ]
+        },
+        "eventType": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "contactId": {
+          "type": "integer"
+        },
+        "details": {
+          "type": "object",
+          "properties": {
+            "stat": {
+              "type": "object",
+              "properties": {
+                "email_id": {
+                  "type": "integer"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "dateRead": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "dateSent": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "email_name": {
+                  "type": "string"
+                },
+                "isRead": {
+                  "type": "boolean"
+                },
+                "isFailed": {
+                  "type": "boolean"
+                },
+                "viewedInBrowser": {
+                  "type": "boolean"
+                },
+                "retryCount": {
+                  "type": "integer"
+                },
+                "idHash": {
+                  "type": "string"
+                },
+                "openDetails": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "datetime": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "useragent": {
+                          "type": "string"
+                        },
+                        "inBrowser": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "datetime",
+                        "useragent",
+                        "inBrowser"
+                      ]
+                    }
+                  ]
+                },
+                "storedSubject": {
+                  "type": "string"
+                },
+                "timeToRead": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email_id",
+                "id",
+                "dateRead",
+                "dateSent",
+                "subject",
+                "email_name",
+                "isRead",
+                "isFailed",
+                "viewedInBrowser",
+                "retryCount",
+                "idHash",
+                "openDetails",
+                "storedSubject",
+                "timeToRead"
+              ]
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "stat",
+            "type"
+          ]
+        }
+      }
+}

@@ -1,0 +1,6 @@
+{
+  "host": "https://mautic.asanarebel.com/api",
+  "username": "<username>", 
+  "password": "<password>",
+  "start_date": "2022-10-17 00:00:00"
+}

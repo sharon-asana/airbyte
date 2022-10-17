@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+            "id": {
+                "type": "integer"
+            },
+            "dateAdded": {
+                "type": ["null", "string"],
+                "format": "date-time"
+            },
+            "createdBy": {
+                "type": "integer"
+            },
+            "createdByUser": {
+                "type": "string"
+            },
+            "dateModified": {
+                "type": ["null", "string"],
+                "format": "date-time"
+            },
+            "isPublished": {
+                "type": "boolean"
+            },
+            "modifiedBy": {
+                "type": ["null", "integer"]
+            },
+            "modifiedByUser": {
+                "type": ["null", "string"]
+            },
+            "points": {
+                "type": "integer"
+            },
+            "color": {
+                "type": ["null", "string"]
+            },
+            "lastActive": {
+                "type": ["null", "string"],
+                "format": "date-time"
+            },
+            "owner": {
+                "type": ["null", "string"]
+            },
+            "ipAddresses": {
+                "type": ["null", "string"]
+            },
+            "custom_fields": {
+                "type": ["null", "string"]
+            },
+            "updated_at": {
+                "type": "string",
+                "format": "date-time"
+            }
+    }
+}
+  
+  
