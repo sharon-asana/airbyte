@@ -1,0 +1,108 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "redirect_id": {
+        "type": "integer"
+      },
+      "email_id": {
+        "type": "integer"
+      },
+      "lead_id": {
+        "type": "integer"
+      },
+      "ip_id": {
+        "type": "integer"
+      },
+      "device_id": {
+        "type": "integer"
+      },
+      "date_hit": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "date_left": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "country": {
+        "type": "string"
+      },
+      "region": {
+        "type": "string"
+      },
+      "city": {
+        "type": "string"
+      },
+      "isp": {
+        "type": "string"
+      },
+      "organization": {
+        "type": "string"
+      },
+      "code": {
+        "type": "integer"
+      },
+      "url": {
+        "type": "string"
+      },
+      "user_agent": {
+        "type": "string"
+      },
+      "browser_languages": {
+        "type": "string"
+      },
+      "tracking_id": {
+        "type": "string"
+      },
+      "source": {
+        "type": "string"
+      },
+      "source_id": {
+        "type": "integer"
+      },
+      "query": {
+        "type": "string"
+      },
+      "referer": {
+        "type": "string"
+      },
+      "page_language": {
+        "type": "string"
+      },
+      "url_title": {
+        "type": "string"
+      },
+      "remote_host": {
+        "type": "string"
+      },
+      "page_id": {
+        "type":"integer"
+      }
+    },
+    "required": [
+      "id",
+      "redirect_id",
+      "email_id",
+      "lead_id",
+      "ip_id",
+      "device_id",
+      "date_hit",
+      "country",
+      "region",
+      "city",
+      "isp",
+      "organization",
+      "code",
+      "url",
+      "user_agent",
+      "browser_languages",
+      "tracking_id",
+      "source",
+      "source_id",
+      "query"
+    ]
+  }

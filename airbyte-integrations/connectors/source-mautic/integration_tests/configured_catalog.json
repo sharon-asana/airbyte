@@ -51,6 +51,58 @@
       },
       "sync_mode": "incremental",
       "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "page_hit_stats",
+        "json_schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        },
+        "supported_sync_modes": ["full_refresh"]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "email_stats",
+        "json_schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        },
+        "supported_sync_modes": ["full_refresh"]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "overwrite"
     }
   ]
 }

@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "email_id": {
+      "type": "integer"
+    },
+    "lead_id": {
+      "type": "integer"
+    },
+    "ip_id": {
+      "type": "integer"
+    },
+    "email_address": {
+      "type": "string"
+    },
+    "date_sent": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_read": {
+      "type": "boolean"
+    },
+    "is_failed": {
+      "type": "boolean"
+    },
+    "viewed_in_browser": {
+      "type": "boolean"
+    },
+    "date_read": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tracking_hash": {
+      "type": "string"
+    },
+    "retry_count": {
+      "type": "integer"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "integer"
+    },
+    "open_count": {
+      "type": "integer"
+    },
+    "last_opened": {
+      "type": "string",
+      "format":"date-time"
+    },
+    "open_details": {
+      "type": "string"
+    }
+  }
+}
