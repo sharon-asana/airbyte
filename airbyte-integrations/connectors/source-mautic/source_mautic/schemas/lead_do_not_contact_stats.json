@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "lead_id": {
+      "type": "integer"
+    },
+    "date_added": {
+      "type": "string",
+      "format":"date-time"
+    },
+    "reason": {
+      "type": "integer"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "channel_id": {
+      "type": "integer"
+    },
+    "comments": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "lead_id",
+    "date_added",
+    "reason",
+    "channel",
+    "channel_id",
+    "comments"
+  ]
+}

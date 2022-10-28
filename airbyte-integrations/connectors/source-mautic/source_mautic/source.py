@@ -112,19 +112,212 @@ class IncrementalMauticStream(MauticStream, ABC):
         
     #     return params
 
+class Campaigns(MauticStream):
+
+    primary_key = "id"
+    limit = 10
+    start = 0
+
+    def __init__(self,url_base="",**kwargs):
+        super().__init__(**kwargs)
+        self.url_base = url_base
+
+    def path(self, **kwargs) -> str:
+        
+        return "campaigns"
+
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+
+        response_data = response.json()
+        self.total_records = int(response_data["total"])
+        
+        if int(response_data["total"]) >= self.start:
+            self.start+=self.limit
+            return {"start": self.start}
+        else:
+            return None
+
+    def request_params(self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, Any] = None, next_page_token: Mapping[str, Any] = None) -> MutableMapping[str, Any]:
+
+        params = super().request_params(stream_state, stream_slice, next_page_token)
+
+        if next_page_token:
+            params.update(next_page_token)
+
+        params['minimal'] = 'true'
+
+        return params
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        """
+        :return an iterable containing each record in the response
+        """
+
+        print(response.request.path_url)
+
+        response_dict = []
+
+        response_json = response.json()["campaigns"]
+
+        for campaign in response_json:
+
+            response_dict.append(response_json[campaign])
+
+        yield from response_dict
+
+class CampaignLeadEventLogStats(IncrementalMauticStream):
+
+    cursor_field = "date_triggered"
+    primary_key = "id"
+    start = 0
+
+    def __init__(self,start_date="",url_base="",**kwargs):
+        super().__init__(**kwargs)
+        self.url_base = url_base
+        self.start_date = start_date
+        self.limit = 10000
+
+    def path(self, **kwargs) -> str:
+        
+        return "stats/campaign_lead_event_log"
+
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+
+        response_data = response.json()
+        self.total_records = int(response_data["total"])
+        
+        if int(response_data["total"]) >= self.start:
+            self.start+=self.limit
+            return {"start": self.start}
+        else:
+            return None
+
+    def request_params(
+        self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+    ) -> MutableMapping[str, Any]:
+
+        params = super().request_params(stream_state,stream_slice,next_page_token)
+        
+        if next_page_token:
+            params.update(next_page_token)
+
+        next_date = self.start_date
+        if stream_state.get(self.cursor_field) is not None:
+            next_date = stream_state.get(self.cursor_field)
+        
+        params["where[0][val]"] = next_date
+        params["where[0][expr]"] = "gte"
+        params["where[0][col]"] = self.cursor_field
+        params["limit"] = self.limit
+        params["orderBy"] = self.cursor_field
+        params["orderByDir"] = "ASC"
+        
+        return params
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        """
+        :return an iterable containing each record in the response
+        """
+
+        print(response.request.path_url)
+
+        response_json = response.json()["stats"]
+
+        yield from response_json
+
+    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
+        the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
+        """
+
+        updated_state = max(current_stream_state.get(self.cursor_field, ""), latest_record.get(self.cursor_field, ""))
+
+        return {self.cursor_field: updated_state}
+
+class LeadDoNotContactStats(IncrementalMauticStream):
+
+    cursor_field = "date_added"
+    primary_key = "id"
+    start = 0
+
+    def __init__(self,start_date="",url_base="",**kwargs):
+        super().__init__(**kwargs)
+        self.url_base = url_base
+        self.start_date = start_date
+        self.limit = 10000
+
+    def path(self, **kwargs) -> str:
+        
+        return "stats/lead_donotcontact"
+
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+
+        response_data = response.json()
+        self.total_records = int(response_data["total"])
+        
+        if int(response_data["total"]) >= self.start:
+            self.start+=self.limit
+            return {"start": self.start}
+        else:
+            return None
+
+    def request_params(
+        self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+    ) -> MutableMapping[str, Any]:
+
+        params = super().request_params(stream_state,stream_slice,next_page_token)
+        
+        if next_page_token:
+            params.update(next_page_token)
+
+        next_date = self.start_date
+        if stream_state.get(self.cursor_field) is not None:
+            next_date = stream_state.get(self.cursor_field)
+        
+        params["where[0][val]"] = next_date
+        params["where[0][expr]"] = "gte"
+        params["where[0][col]"] = self.cursor_field
+        params["limit"] = self.limit
+        params["orderBy"] = self.cursor_field
+        params["orderByDir"] = "ASC"
+        
+        return params
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        """
+        :return an iterable containing each record in the response
+        """
+
+        print(response.request.path_url)
+
+        response_json = response.json()["stats"]
+
+        yield from response_json
+
+    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
+        the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
+        """
+
+        updated_state = max(current_stream_state.get(self.cursor_field, ""), latest_record.get(self.cursor_field, ""))
+
+        return {self.cursor_field: updated_state}
+
 class EmailStats(IncrementalMauticStream):
 
     cursor_field = "date_sent"
     alt_cursor_field = "date_read"
     primary_key = "id"
     start = 0
-    limit = 10000
     alt_cursor_field_current_stream_value = ""
 
     def __init__(self,start_date="",url_base="",**kwargs):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
+        self.limit = 10000
 
     def path(self, **kwargs) -> str:
         
@@ -248,12 +441,12 @@ class PageHitStats(IncrementalMauticStream):
     cursor_field = "date_hit"
     primary_key = "id"
     start = 0
-    limit = 10000
 
     def __init__(self,start_date="",url_base="",**kwargs):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
+        self.limit = 10000
 
     def path(self, **kwargs) -> str:
         
@@ -328,6 +521,7 @@ class EmailEvents(IncrementalMauticStream):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
+        self.limit = 10000
 
     def path(self, **kwargs) -> str:
         
@@ -394,6 +588,85 @@ class EmailEvents(IncrementalMauticStream):
 
         return {self.cursor_field: updated_state}
 
+class DoNotContactEvents(IncrementalMauticStream):
+
+    cursor_field = "timestamp"
+    primary_key = "eventId"
+    page = 0
+    include_events = 'lead.donotcontact'
+
+    def __init__(self,start_date="",url_base="",**kwargs):
+        super().__init__(**kwargs)
+        self.url_base = url_base
+        self.start_date = start_date
+        self.limit = 2000
+
+    def path(self, **kwargs) -> str:
+        
+        return "contacts/activity"
+
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+        response_data = response.json()
+        self.total_records = int(response_data["total"])
+        
+        if int(response_data["maxPages"]) > int(response_data["page"]):
+            self.page+=1
+            return {"page": self.page}
+        else:
+            return None
+
+    def request_params(
+        self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+    ) -> MutableMapping[str, Any]:
+
+        params = super().request_params(stream_state,stream_slice,next_page_token)
+        
+        if next_page_token:
+            params.update(next_page_token)
+
+        next_date = self.start_date
+        if stream_state.get(self.cursor_field) is not None:
+            next_date = stream_state.get(self.cursor_field)
+        
+        params["filters[dateFrom]"] = next_date
+        params["limit"] = self.limit
+        params["orderBy"] = self.cursor_field
+        params["orderByDir"] = "ASC"
+
+        # add events to include
+        i=0
+        for event in self.include_events.split(","):
+            print(event)
+            params[f"filters[includeEvents][{i}]"] = event
+            i+=1
+
+        # first iteration add the page number (there's not default in the API)
+        if "page" not in params:
+            params["page"] = 0
+        
+        return params
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        """
+        :return an iterable containing each record in the response
+        """
+
+        print(response.request.path_url)
+
+        response_json = response.json()["events"]
+
+        yield from response_json
+
+    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
+        the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
+        """
+
+        updated_state = max(current_stream_state.get(self.cursor_field, ""), latest_record.get(self.cursor_field, ""))
+
+        return {self.cursor_field: updated_state}
+
 class Contacts(IncrementalMauticStream):
 
     cursor_field = "dateAdded"
@@ -401,7 +674,6 @@ class Contacts(IncrementalMauticStream):
     primary_key = "id"
     total_records = 0
     records_count = 0
-    limit = 200
     start = 0
     alt_cursor_field_current_stream_value = ""
 
@@ -409,7 +681,7 @@ class Contacts(IncrementalMauticStream):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
-        kwargs['limit'] = self.limit
+        self.limit = 1000
 
     def path(self, **kwargs) -> str:
         
@@ -471,7 +743,7 @@ class Contacts(IncrementalMauticStream):
                 if key == 'where[0][col]' and val == 'dateAdded':
                     order_by_params["orderBy"] = cursor_field_snake_case
             merged_params = {**where_clause_params,**order_by_params}
-            merged_params['limit'] = self.limit
+            #merged_params['limit'] = self.limit
             slices.append(merged_params)
             
 
@@ -525,7 +797,7 @@ class Contacts(IncrementalMauticStream):
             data['custom_fields'] = custom_fields
 
             # add updated_at
-            data['updated_at'] = max(data['dateAdded'],data['dateModified'])
+            data['updated_at'] = max(data['dateAdded'],data['dateModified'] or '1970-01-01 00:00:00')
             response_dict.append(data)
         
         yield from response_dict
@@ -582,9 +854,13 @@ class SourceMautic(AbstractSource):
         """
         auth = BasicHttpAuthenticator(username=config["username"], password=config["password"])
         url_base = f'{config["host"].strip(" /")}/api'
-        args = {"limit": 1000}
+        args = {"limit": 2000}
         return [
                 Contacts(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
                 EmailEvents(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
                 PageHitStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
-                EmailStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args)]
+                EmailStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
+                DoNotContactEvents(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
+                Campaigns(authenticator=auth,url_base=url_base),
+                LeadDoNotContactStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
+                CampaignLeadEventLogStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args)]

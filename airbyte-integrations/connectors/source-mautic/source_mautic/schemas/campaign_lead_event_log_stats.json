@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "event_id": {
+      "type": "integer"
+    },
+    "lead_id": {
+      "type": "integer"
+    },
+    "campaign_id": {
+      "type": "integer"
+    },
+    "rotation": {
+      "type": "integer"
+    },
+    "date_triggered": {
+      "type": "string",
+      "format":"date-time"
+    },
+    "is_scheduled": {
+      "type": "boolean"
+    },
+    "trigger_date": {
+      "type": "string",
+      "format":"date-time"
+    },
+    "system_triggered": {
+      "type": "boolean"
+    },
+    "metadata": {
+      "type": "string"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "channel_id": {
+      "type": "integer"
+    },
+    "non_action_path_taken": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "event_id",
+    "lead_id",
+    "campaign_id",
+    "rotation",
+    "date_triggered",
+    "is_scheduled",
+    "trigger_date",
+    "system_triggered",
+    "metadata",
+    "channel",
+    "channel_id",
+    "non_action_path_taken"
+  ]
+}

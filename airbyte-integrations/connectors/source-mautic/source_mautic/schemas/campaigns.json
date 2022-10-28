@@ -1,0 +1,83 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "isPublished": {
+        "type": "boolean"
+      },
+      "dateAdded": {
+        "type": "string",
+        "format":"date-time"
+      },
+      "dateModified": {
+        "type": "string",
+        "format":"date-time"
+      },
+      "createdBy": {
+        "type": "integer"
+      },
+      "createdByUser": {
+        "type": "string"
+      },
+      "modifiedBy": {
+        "type": "integer"
+      },
+      "modifiedByUser": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "category": {
+        "type": "object",
+        "properties": {
+          "createdByUser": {
+            "type": "string"
+          },
+          "modifiedByUser": {
+            "type":["null","string"]
+          },
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "description": {
+            "type": ["null","string"]
+          },
+          "color": {
+            "type": ["null","string"]
+          },
+          "bundle": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "createdByUser",
+          "id",
+          "title",
+          "alias",
+          "description",
+          "color",
+          "bundle"
+        ]
+      }
+    },
+    "required": [
+      "isPublished",
+      "dateAdded",
+      "createdBy",
+      "createdByUser",
+      "id",
+      "name",
+      "category",
+      "description"
+    ]
+  }

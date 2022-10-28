@@ -1,4 +1,9 @@
 {
-  "contacts": {"dateAdded": "2022-10-17T07:00:52+00:00","dateModified": "2022-10-17T07:00:52+00:00"},
-  "email_events": {"timestamp": "2022-10-17T05:00:52+00:00"}
+  "contacts": {"dateAdded": "2022-10-26T00:00:00+00:00","dateModified": "2022-10-26T00:00:00+00:00"},
+  "email_events": {"timestamp": "2022-10-26T05:00:52+00:00"},
+  "page_hit_stats": {"date_hit":"2022-10-26T11:00:52+00:00"},
+  "email_stats": {"date_read": "2022-10-26T11:00:52+00:00","date_sent": "2022-10-26T11:00:52+00:00"},
+  "do_not_contact_events": {"timestamp":"2022-10-26T05:00:52+00:00"},
+  "lead_do_not_contact_stats": {"date_added":"2022-10-26T05:00:52+00:00"},
+  "campaign_lead_event_log_stats": {"date_triggered":"2022-10-25T05:00:52+00:00"}
 }

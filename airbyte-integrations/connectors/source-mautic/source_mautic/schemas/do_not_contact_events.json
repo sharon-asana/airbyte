@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "event": {
+      "type": "string"
+    },
+    "eventId": {
+      "type": "string"
+    },
+    "eventLabel": {
+      "type": "string"
+    },
+    "eventType": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "contactId": {
+      "type": "integer"
+    },
+    "details": {
+      "type": "object",
+      "properties": {
+        "dnc": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "channel_id": {
+              "type": "integer"
+            },
+            "date_added": {
+              "type": "string",
+              "format":"date-time"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "comments": {
+              "type": "string"
+            },
+            "itemName": {
+              "type": "string"
+            },
+            "itemRoute": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "channel",
+            "channel_id",
+            "date_added",
+            "reason",
+            "comments",
+            "itemName",
+            "itemRoute"
+          ]
+        }
+      },
+      "required": [
+        "dnc"
+      ]
+    }
+  },
+  "required": [
+    "event",
+    "eventId",
+    "eventLabel",
+    "eventType",
+    "timestamp",
+    "contactId",
+    "details"
+  ]
+}
