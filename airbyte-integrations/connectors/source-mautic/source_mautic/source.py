@@ -175,7 +175,7 @@ class CampaignLeadEventLogStats(IncrementalMauticStream):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
-        self.limit = 10000
+        self.limit = 100000
 
     def path(self, **kwargs) -> str:
         
