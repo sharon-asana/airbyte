@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "metadata_id": {
+      "type": "string"
+    },
+    "metadata_name": {
+      "type": "string"
+    },
+    "metadata_campaignOnAir": {
+      "type": "boolean"
+    },
+    "metadata_onAirReason": {
+      "type": "string"
+    },
+    "metadata_enabled": {
+      "type": "boolean"
+    },
+    "metadata_budget_id": {
+      "type": "string"
+    },
+    "metadata_budget_shared": {
+      "type": "boolean"
+    },
+    "metadata_budget_amount": {
+      "type": "number"
+    },
+    "metadata_budget_currency": {
+      "type": "string"
+    },
+    "metadata_budget_startDate": {
+      "type": "string"
+    },
+    "metadata_budget_endDate": {
+      "type": "string"
+    },
+    "metadata_budget_type": {
+      "type": "string"
+    },
+    "metadata_budget_pacing": {
+      "type": "string"
+    },
+    "metadata_isVideo": {
+      "type": "boolean"
+    },
+    "metadata_cpc": {
+      "type": "number"
+    },
+    "metadata_targetedSegments": {
+      "type": "number"
+    },
+    "metadata_optimizationExperimentStatus": {
+      "type": "string"
+    },
+    "metadata_creativeFormat": {
+      "type": "string"
+    },
+    "metrics_impressions": {
+      "type": "integer"
+    },
+    "metrics_clicks": {
+      "type": "integer"
+    },
+    "metrics_totalConversions": {
+      "type": "integer"
+    },
+    "metrics_conversions": {
+      "type": "integer"
+    },
+    "metrics_viewConversions": {
+      "type": "integer"
+    },
+    "metrics_spend": {
+      "type": "number"
+    },
+    "metrics_ecpc": {
+      "type": "number"
+    },
+    "metrics_ctr": {
+      "type": "number"
+    },
+    "metrics_conversionRate": {
+      "type": "number"
+    },
+    "metrics_viewConversionRate": {
+      "type": "number"
+    },
+    "metrics_cpa": {
+      "type": "number"
+    },
+    "metrics_totalCpa": {
+      "type": "number"
+    },
+    "metrics_totalSumValue": {
+      "type": "number"
+    },
+    "metrics_sumValue": {
+      "type": "number"
+    },
+    "metrics_viewSumValue": {
+      "type": "number"
+    },
+    "metrics_totalAverageValue": {
+      "type": "number"
+    },
+    "metrics_averageValue": {
+      "type": "number"
+    },
+    "metrics_viewAverageValue": {
+      "type": "number"
+    },
+    "metrics_totalRoas": {
+      "type": "number"
+    },
+    "metrics_roas": {
+      "type": "number"
+    },
+    "primary_key": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "string"
+    }
+  }
+}
