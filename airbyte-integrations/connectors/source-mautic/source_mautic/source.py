@@ -18,6 +18,8 @@ from airbyte_cdk.logger import AirbyteLogger
 from requests.auth import HTTPBasicAuth
 import re
 from urllib.parse import urlparse
+import json
+import phpserialize
 
 # Basic full refresh stream
 class MauticStream(HttpStream, ABC):
@@ -112,10 +114,87 @@ class IncrementalMauticStream(MauticStream, ABC):
         
     #     return params
 
+
+class AuditLog(IncrementalMauticStream):
+
+    cursor_field = "date_added"
+    primary_key = "id"
+    start = 0
+
+    def __init__(self,start_date="",url_base="",**kwargs):
+        super().__init__(**kwargs)
+        self.url_base = url_base
+        self.start_date = start_date
+        self.limit = 100000
+
+    def path(self, **kwargs) -> str:
+        
+        return "stats/audit_log"
+
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+
+        response_data = response.json()
+        self.total_records = int(response_data["total"])
+        
+        if int(response_data["total"]) >= self.start:
+            self.start+=self.limit
+            return {"start": self.start}
+        else:
+            return None
+
+    def request_params(
+        self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+    ) -> MutableMapping[str, Any]:
+
+        params = super().request_params(stream_state,stream_slice,next_page_token)
+        
+        if next_page_token:
+            params.update(next_page_token)
+
+        next_date = self.start_date
+        if stream_state.get(self.cursor_field) is not None:
+            next_date = stream_state.get(self.cursor_field)
+        
+        params["where[0][val]"] = next_date
+        params["where[0][expr]"] = "gte"
+        params["where[0][col]"] = self.cursor_field
+        params["limit"] = self.limit
+        params["orderBy"] = self.cursor_field
+        params["orderByDir"] = "ASC"
+        
+        return params
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        """
+        :return an iterable containing each record in the response
+        """
+
+        print(response.request.path_url)
+        response_json = response.json()["stats"]
+        for row in response_json:
+            # convert the php object to a json
+            try:
+                details = phpserialize.loads(row['details'].encode(),decode_strings=True)
+                row['details_json'] = details
+            except ValueError as e:
+                row['details_json'] = 'value error'
+
+        yield from response_json
+
+    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
+        the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
+        """
+
+        updated_state = max(current_stream_state.get(self.cursor_field, ""), latest_record.get(self.cursor_field, ""))
+
+        return {self.cursor_field: updated_state}
+
 class Campaigns(MauticStream):
 
     primary_key = "id"
-    limit = 10
+    limit = 50
     start = 0
 
     def __init__(self,url_base="",**kwargs):
@@ -145,6 +224,7 @@ class Campaigns(MauticStream):
             params.update(next_page_token)
 
         params['minimal'] = 'true'
+        params['limit'] = self.limit
 
         return params
 
@@ -162,6 +242,87 @@ class Campaigns(MauticStream):
         for campaign in response_json:
 
             response_dict.append(response_json[campaign])
+
+        yield from response_dict
+
+class CampaignEvents(MauticStream):
+
+    primary_key = "event_id"
+    limit = 50
+    start = 0
+
+    def __init__(self,url_base="",**kwargs):
+        super().__init__(**kwargs)
+        self.url_base = url_base
+
+    def path(self, **kwargs) -> str:
+        
+        return "campaigns"
+
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+
+        response_data = response.json()
+        self.total_records = int(response_data["total"])
+        
+        if int(response_data["total"]) >= self.start:
+            self.start+=self.limit
+            return {"start": self.start}
+        else:
+            return None
+
+    def request_params(self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, Any] = None, next_page_token: Mapping[str, Any] = None) -> MutableMapping[str, Any]:
+
+        params = super().request_params(stream_state, stream_slice, next_page_token)
+
+        if next_page_token:
+            params.update(next_page_token)
+
+        params['limit'] = self.limit
+
+        return params
+
+    def flatteningJSON(self,b): 
+        ans = {} 
+        def flat(i, na =''):
+            #nested key-value pair: dict type
+            if type(i) is dict: 
+                for a in i: 
+                    flat(i[a], na + a + '_')
+            #nested key-value pair: list type
+            # elif type(i) is list: 
+            #     j = 0  
+            #     for a in i:                 
+            #         flat(a, na + str(j) + '_') 
+            #         j += 1
+            else: 
+                ans[na[:-1]] = i 
+        flat(b) 
+        return ans
+
+    def empty_str_to_none(self,items):
+        return {k: None if v=='' else v for k, v in items}
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+
+        response_dict = []
+
+        response_json = response.json()["campaigns"]
+
+        for campaign_id in response_json:
+
+            event = dict()
+            event['campaign_id'] = campaign_id
+            event['campaign_updated_at'] = max(response_json[campaign_id]['dateModified'] or '1970-01-01 00:00:00',response_json[campaign_id]['dateAdded'])
+            event['campaign_date_modified'] = response_json[campaign_id]['dateModified']
+            event['campaign_date_added'] = response_json[campaign_id]['dateAdded']
+            for event_data in response_json[campaign_id]['events']:
+                event['event'] = event_data
+
+                # in order to avoid empty strings as numeric values
+                event = self.flatteningJSON(event)
+                event = json.dumps(event)
+                event = json.loads(event,object_pairs_hook=self.empty_str_to_none)
+                response_dict.append(event)
 
         yield from response_dict
 
@@ -317,7 +478,7 @@ class EmailStats(IncrementalMauticStream):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
-        self.limit = 10000
+        self.limit = 20000
 
     def path(self, **kwargs) -> str:
         
@@ -446,7 +607,7 @@ class PageHitStats(IncrementalMauticStream):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
-        self.limit = 10000
+        self.limit = 20000
 
     def path(self, **kwargs) -> str:
         
@@ -521,7 +682,7 @@ class EmailEvents(IncrementalMauticStream):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
-        self.limit = 10000
+        self.limit = 20000
 
     def path(self, **kwargs) -> str:
         
@@ -681,7 +842,7 @@ class Contacts(IncrementalMauticStream):
         super().__init__(**kwargs)
         self.url_base = url_base
         self.start_date = start_date
-        self.limit = 1000
+        self.limit = 2000
 
     def path(self, **kwargs) -> str:
         
@@ -784,17 +945,21 @@ class Contacts(IncrementalMauticStream):
             data = {}
             custom_fields = {}
             fields = response_json['contacts'][contact]['fields']
+
+            for field_name in fields['all']:
+                data[field_name] = fields['all'][field_name]
+
             base_fields = response_json['contacts'][contact]
             for field in base_fields:
                 if field != 'fields':
                     data[field] = base_fields[field]
             
-            # add custom fields as a json
-            for field_name in fields['core']:
-                if fields['core'][field_name]['is_fixed'] == '0':
-                    custom_fields[field_name] = fields['core'][field_name]['value']
+            # # add custom fields as a json
+            # for field_name in fields['core']:
+            #     if fields['core'][field_name]['is_fixed'] == '0':
+            #         custom_fields[field_name] = fields['core'][field_name]['value']
             
-            data['custom_fields'] = custom_fields
+            # data['custom_fields'] = custom_fields
 
             # add updated_at
             data['updated_at'] = max(data['dateAdded'],data['dateModified'] or '1970-01-01 00:00:00')
@@ -863,4 +1028,6 @@ class SourceMautic(AbstractSource):
                 DoNotContactEvents(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
                 Campaigns(authenticator=auth,url_base=url_base),
                 LeadDoNotContactStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
-                CampaignLeadEventLogStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args)]
+                CampaignLeadEventLogStats(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args),
+                CampaignEvents(authenticator=auth,url_base=url_base),
+                AuditLog(authenticator=auth,start_date=config['start_date'],url_base=url_base,**args)]

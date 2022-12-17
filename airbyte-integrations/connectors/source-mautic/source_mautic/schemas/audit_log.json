@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "user_id": {
+      "type": "integer"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "bundle": {
+      "type": "string"
+    },
+    "object": {
+      "type": "string"
+    },
+    "object_id": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "details": {
+      "type": "string"
+    },
+    "details_json": {
+      "type": "object"
+    },
+    "date_added": {
+      "type": "string",
+      "format":"date-time"
+    },
+    "ip_address": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "user_id",
+    "user_name",
+    "bundle",
+    "object",
+    "object_id",
+    "action",
+    "details",
+    "date_added",
+    "ip_address"
+  ]
+}
