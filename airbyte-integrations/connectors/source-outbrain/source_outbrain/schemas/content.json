@@ -5,55 +5,58 @@
       "metadata_id": {
           "type": "string"
       },
-      "metadata_name": {
+      "metadata_text": {
           "type": "string"
       },
-      "metadata_campaignOnAir": {
+      "metadata_creationTime": {
+          "type": "string"
+      },
+      "metadata_lastModified": {
+          "type": "string"
+      },
+      "metadata_url": {
+          "type": "string"
+      },
+      "metadata_status": {
+          "type": "string"
+      },
+      "metadata_approvalStatus_status": {
+          "type": "string"
+      },
+      "metadata_approvalStatus_isEditable": {
           "type": "boolean"
-      },
-      "metadata_onAirReason": {
-          "type": "string"
       },
       "metadata_enabled": {
           "type": "boolean"
       },
-      "metadata_budget_id": {
+      "metadata_cachedImageUrl": {
           "type": "string"
       },
-      "metadata_budget_shared": {
+      "metadata_campaignId": {
+          "type": "string"
+      },
+      "metadata_campaignName": {
+          "type": "string"
+      },
+      "metadata_archived": {
           "type": "boolean"
       },
-      "metadata_budget_amount": {
-          "type": "number"
-      },
-      "metadata_budget_currency": {
+      "metadata_documentLanguage": {
           "type": "string"
       },
-      "metadata_budget_startDate": {
-          "type": "string"
-      },
-      "metadata_budget_endDate": {
-          "type": "string"
-      },
-      "metadata_budget_type": {
-          "type": "string"
-      },
-      "metadata_budget_pacing": {
-          "type": "string"
-      },
-      "metadata_isVideo": {
-          "type": "boolean"
-      },
-      "metadata_cpc": {
-          "type": "number"
-      },
-      "metadata_targetedSegments": {
-          "type": "number"
-      },
-      "metadata_optimizationExperimentStatus": {
+      "metadata_sectionName": {
           "type": "string"
       },
       "metadata_creativeFormat": {
+          "type": "string"
+      },
+      "metadata_imageMetadata_id": {
+          "type": "string"
+      },
+      "metadata_imageMetadata_requestedImageUrl": {
+          "type": "string"
+      },
+      "metadata_imageMetadata_originalImageUrl": {
           "type": "string"
       },
       "metrics_impressions": {

@@ -8,52 +8,16 @@
       "metadata_name": {
           "type": "string"
       },
-      "metadata_campaignOnAir": {
-          "type": "boolean"
-      },
-      "metadata_onAirReason": {
+      "metadata_code": {
           "type": "string"
       },
-      "metadata_enabled": {
-          "type": "boolean"
-      },
-      "metadata_budget_id": {
+      "metadata_countryId": {
           "type": "string"
       },
-      "metadata_budget_shared": {
-          "type": "boolean"
-      },
-      "metadata_budget_amount": {
-          "type": "number"
-      },
-      "metadata_budget_currency": {
+      "metadata_countryName": {
           "type": "string"
       },
-      "metadata_budget_startDate": {
-          "type": "string"
-      },
-      "metadata_budget_endDate": {
-          "type": "string"
-      },
-      "metadata_budget_type": {
-          "type": "string"
-      },
-      "metadata_budget_pacing": {
-          "type": "string"
-      },
-      "metadata_isVideo": {
-          "type": "boolean"
-      },
-      "metadata_cpc": {
-          "type": "number"
-      },
-      "metadata_targetedSegments": {
-          "type": "number"
-      },
-      "metadata_optimizationExperimentStatus": {
-          "type": "string"
-      },
-      "metadata_creativeFormat": {
+      "metadata_countryCode": {
           "type": "string"
       },
       "metrics_impressions": {
@@ -120,6 +84,9 @@
           "type": "string"
       },
       "start_date": {
+          "type": "string"
+      },
+      "campaignId": {
           "type": "string"
       }
   }

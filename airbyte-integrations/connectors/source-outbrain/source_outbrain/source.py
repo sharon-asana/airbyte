@@ -10,7 +10,7 @@ import requests
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
-#from airbyte_cdk.sources.streams.http.auth import TokenAuthenticator,BasicHttpAuthenticator
+# from airbyte_cdk.sources.streams.http.auth import TokenAuthenticator,BasicHttpAuthenticator
 
 from .authenticator import OutbrainAuthenicator
 from datetime import datetime,timedelta
@@ -95,30 +95,11 @@ class OutbrainStream(HttpStream, ABC):
         yield {}
 
 
-class Customers(OutbrainStream):
-    """
-    TODO: Change class name to match the table/data source this stream corresponds to.
-    """
-
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
-    primary_key = "customer_id"
-
-    def path(
-        self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None, next_page_token: Mapping[str, Any] = None
-    ) -> str:
-        """
-        TODO: Override this method to define the path this stream corresponds to. E.g. if the url is https://example-api.com/v1/customers then this
-        should return "customers". Required.
-        """
-        return "customers"
-
-
 # Basic incremental stream
 class IncrementalOutbrainStream(OutbrainStream, ABC):
     
-    def __init__(self, limit: str, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.limit = limit
 
     # TODO: Fill in to checkpoint stream reads after N records. This prevents re-reading of data if the stream fails for any reason.
     state_checkpoint_interval = None
@@ -134,37 +115,12 @@ class IncrementalOutbrainStream(OutbrainStream, ABC):
         """
         return []
 
-    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+    @staticmethod
+    def path(stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
         """
-        Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
-        the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
+        Override this method to define path
         """
-        return {}
-
-# API documentation 
-# https://amplifyv01.docs.apiary.io/#reference/performance-reporting/campaigns/retrieve-campaigns-with-performance-statistics-for-a-marketer
-class Campaigns(IncrementalOutbrainStream):
-    
-    cursor_field = "start_date"
-    primary_key = "primary_key"
-    limit = 10
-    start = 0
-
-    def __init__(self,start_date="",**kwargs):
-        super().__init__(**kwargs)
-        self.start_date = start_date
-
-    def path(self,stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
-        
-        return f"reports/marketers/{stream_slice['marketerId']}/campaigns"
-
-    def get_marketers(self):
-
-        auth_headers = self.authenticator.get_auth_header()
-        response = requests.get(f"{self.url_base}/marketers",headers=auth_headers)
-        
-        for marketer in response.json()["marketers"]:
-            yield {'marketerId':marketer['id']}
+        return ""
 
     def stream_slices(self, stream_state: Mapping[str, Any] = None, **kwargs) -> Iterable[Optional[Mapping[str, any]]]:
 
@@ -190,23 +146,40 @@ class Campaigns(IncrementalOutbrainStream):
 
         return params
 
-    def flatteningJSON(self,b): 
-        ans = {} 
+    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+                Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
+                the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
+        """
+        latest = max(current_stream_state.get(self.cursor_field, ""), latest_record.get(self.cursor_field, ""))
+
+        return {self.cursor_field:latest}
+
+    def get_marketers(self):
+        auth_headers = self.authenticator.get_auth_header()
+        response = requests.get(f"{self.url_base}/marketers", headers=auth_headers)
+
+        for marketer in response.json()["marketers"]:
+            yield {'marketerId': marketer['id']}
+
+    @staticmethod
+    def flattening_json(b):
+        ans = {}
+
         def flat(i, na =''):
-            #nested key-value pair: dict type
-            if type(i) is dict: 
-                for a in i: 
+            if type(i) is dict:
+                for a in i:
                     flat(i[a], na + a + '_')
-            #nested key-value pair: list type
-            # elif type(i) is list: 
-            #     j = 0  
-            #     for a in i:                 
-            #         flat(a, na + str(j) + '_') 
-            #         j += 1
-            else: 
-                ans[na[:-1]] = i 
-        flat(b) 
+            else:
+                ans[na[:-1]] = i
+        flat(b)
         return ans
+
+
+class PerformanceReporting(IncrementalOutbrainStream):
+
+    def __init__(self, start_date="", **kwargs):
+        super().__init__(**kwargs)
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
 
@@ -218,35 +191,136 @@ class Campaigns(IncrementalOutbrainStream):
 
         for row in res["results"]:
             result_set = {}
-            flatten = self.flatteningJSON(row)
-            pkey = hashlib.sha1(str(cursor+row['metadata']['id']).encode('utf-8')).hexdigest()
+            flatten = self.flattening_json(row)
+            pkey = hashlib.sha1(str(cursor + row['metadata']['id']).encode('utf-8')).hexdigest()
             result_set.update(flatten)
             result_set[self.primary_key] = pkey
             result_set[self.cursor_field] = cursor
             results.append(result_set)
-        
+
         return results
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
 
         response_data = response.json()
-        self.total_records = int(response_data["totalResults"])
-        if (self.start+self.limit) >= response_data["totalResults"]:
+        if (self.start + self.limit) >= response_data["totalResults"]:
             return None
         else:
-            self.start+=self.limit
+            self.start += self.limit
             return {"offset": self.start}
 
-    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
 
-        latest = max(current_stream_state.get(self.cursor_field, ""), latest_record.get(self.cursor_field, ""))
+# API documentation 
+# https://amplifyv01.docs.apiary.io/#reference/performance-reporting/campaigns/retrieve-campaigns-with-performance-statistics-for-a-marketer
+class Campaigns(PerformanceReporting):
+    
+    cursor_field = "start_date"
+    primary_key = "primary_key"
+    limit = 10
+    start = 0
 
-        return {self.cursor_field:latest}
+    def __init__(self,start_date="",**kwargs):
+        super().__init__(**kwargs)
+        self.start_date = start_date
+
+    @staticmethod
+    def path(stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
+
+        return f"reports/marketers/{stream_slice['marketerId']}/campaigns"
+
+
+class Content(PerformanceReporting):
+    cursor_field = "start_date"
+    primary_key = "primary_key"
+    limit = 100
+    start = 0
+
+    def __init__(self, start_date="", **kwargs):
+        super().__init__(**kwargs)
+        self.start_date = start_date
+
+    @staticmethod
+    def path(stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
+
+        return f"reports/marketers/{stream_slice['marketerId']}/content"
+
+
+class PerformanceReportingByCampaignStream(IncrementalOutbrainStream):
+
+    def __init__(self, start_date="", **kwargs):
+        super().__init__(**kwargs)
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        res = response.json()
+
+        cursor = kwargs['stream_slice']['from']
+
+        results = []
+        for row in res["campaignResults"]:
+            result_set = {}
+            campaign_id = row['campaignId']
+            for publisher_data in row['results']:
+                flatten = self.flattening_json(publisher_data)
+                pkey = hashlib.sha1(str(cursor + campaign_id + publisher_data['metadata']['id']).encode('utf-8')).hexdigest()
+                result_set.update(flatten)
+                result_set[self.primary_key] = pkey
+                result_set[self.cursor_field] = cursor
+                result_set['campaignId'] = campaign_id
+                results.append(result_set)
+
+        return results
+
+    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+
+        response_data = response.json()
+        total_results = []
+        for campaign in response_data["campaignResults"]:
+            total_results.append(campaign["totalResults"])
+        max_results = max(total_results, default=0)
+
+        if (self.start + self.limit) >= max_results:
+            return None
+        else:
+            self.start += self.limit
+            return {"offset": self.start}
+
+
+class Publishers(PerformanceReportingByCampaignStream):
+    cursor_field = "start_date"
+    primary_key = "primary_key"
+    limit = 100
+    start = 0
+
+    def __init__(self, start_date="", **kwargs):
+        super().__init__(**kwargs)
+        self.start_date = start_date
+
+    @staticmethod
+    def path(stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
+
+        return f"reports/marketers/{stream_slice['marketerId']}/campaigns/publishers"
+
+
+class CampaignsGeo(PerformanceReportingByCampaignStream):
+    cursor_field = "start_date"
+    primary_key = "primary_key"
+    limit = 100
+    start = 0
+
+    def __init__(self, start_date="", **kwargs):
+        super().__init__(**kwargs)
+        self.start_date = start_date
+
+    @staticmethod
+    def path(stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
+
+        return f"reports/marketers/{stream_slice['marketerId']}/campaigns/geo?breakdown=region"
 
 
 # Source
 class SourceOutbrain(AbstractSource):
-    def check_connection(self, logger, config) -> Tuple[bool, any]:
+    @staticmethod
+    def check_connection(logger, config) -> Tuple[bool, any]:
         
         auth = OutbrainAuthenicator(**config)
 
@@ -255,8 +329,14 @@ class SourceOutbrain(AbstractSource):
         else:
             return False, None
 
-    def streams(self, config: Mapping[str, Any]) -> List[Stream]:
+    @staticmethod
+    def streams(config: Mapping[str, Any]) -> List[Stream]:
         
         auth = OutbrainAuthenicator(**config)
-        args = {"limit": 1}
-        return [Campaigns(authenticator=auth,start_date=config["start_date"],**args)]
+        args = {}
+        return [
+            Campaigns(authenticator=auth, start_date=config["start_date"], **args),
+            CampaignsGeo(authenticator=auth, start_date=config["start_date"], **args),
+            Publishers(authenticator=auth, start_date=config["start_date"], **args),
+            Content(authenticator=auth, start_date=config["start_date"], **args),
+        ]
