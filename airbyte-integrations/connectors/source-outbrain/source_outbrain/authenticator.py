@@ -57,7 +57,8 @@ class Outbrain:
         ssm.put_parameter(
             Name=self.aws_secret_name,
             Value=token,
-            Type="String"
+            Type="String",
+            Overwrite=True
         )
 
         return True
@@ -66,7 +67,7 @@ class Outbrain:
     def check_connection(self):
 
         response = requests.get(f"{self.api_url}/marketers",headers=self.api_headers)
-        
+
         if response.status_code==200:
             return True
         else: 
@@ -97,5 +98,3 @@ class OutbrainAuthenicator(Outbrain):
     
     def get_auth_header(self) -> Mapping[str, Any]:
         return self.api_headers
-
-    
