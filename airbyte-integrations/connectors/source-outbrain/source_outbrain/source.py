@@ -242,7 +242,7 @@ class Content(PerformanceReporting):
     @staticmethod
     def path(stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
 
-        return f"reports/marketers/{stream_slice['marketerId']}/content"
+        return f"reports/marketers/{stream_slice['marketerId']}/promotedContent"
 
 
 class PerformanceReportingByCampaignStream(IncrementalOutbrainStream):
