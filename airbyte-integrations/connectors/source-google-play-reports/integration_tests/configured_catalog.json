@@ -1,0 +1,22 @@
+{
+  "streams": [
+    {
+      "stream": {
+        "name": "sales",
+        "json_schema": {},
+        "supported_sync_modes": ["incremental"]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "earnings",
+        "json_schema": {},
+        "supported_sync_modes": ["incremental"]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "overwrite"
+    }
+  ]
+}

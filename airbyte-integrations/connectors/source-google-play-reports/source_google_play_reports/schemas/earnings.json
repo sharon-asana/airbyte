@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "transaction_date": {
+      "type": "string",
+      "format":"date-time"
+    },
+    "transaction_time": {
+      "type": "string"
+    },
+    "tax_type": {
+      "type": "string"
+    },
+    "transaction_type": {
+      "type": "string"
+    },
+    "refund_type": {
+      "type": "string"
+    },
+    "product_title": {
+      "type": "string"
+    },
+    "product_id": {
+      "type": "string"
+    },
+    "product_type": {
+      "type": "string"
+    },
+    "sku_id": {
+      "type": "string"
+    },
+    "hardware": {
+      "type": "string"
+    },
+    "buyer_country": {
+      "type": "string"
+    },
+    "buyer_state": {
+      "type": "string"
+    },
+    "buyer_postal_code": {
+      "type": "string"
+    },
+    "buyer_currency": {
+      "type": "string"
+    },
+    "amount_buyer_currency": {
+      "type": "number"
+    },
+    "currency_conversion_rate": {
+      "type": "number"
+    },
+    "merchant_currency": {
+      "type": "string"
+    },
+    "amount_merchant_currency": {
+      "type": "number"
+    }
+  }
+}

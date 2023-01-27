@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "order_number": {
+      "type": "string"
+    },
+    "order_charged_date": {
+      "type": "string",
+      "format":"date"
+    },
+    "order_charged_timestamp": {
+      "type": "integer",
+      "format":"date-time"
+    },
+    "financial_status": {
+      "type": ["null", "string"]
+    },
+    "device_model": {
+      "type": ["null", "string"]
+    },
+    "product_title": {
+      "type": ["null", "string"]
+    },
+    "product_id": {
+      "type": ["null", "string"]
+    },
+    "product_type": {
+      "type": ["null", "string"]
+    },
+    "sku_id": {
+      "type": ["null", "string"]
+    },
+    "currency_of_sale": {
+      "type": ["null", "string"]
+    },
+    "item_price": {
+      "type": ["null", "number"]
+    },
+    "taxes_collected": {
+      "type": ["null", "number"]
+    },
+    "charged_amount": {
+      "type": ["null", "number"]
+    },
+    "city_of_buyer": {
+      "type": ["null", "string"]
+    },
+    "state_of_buyer": {
+      "type": ["null", "string"]
+    },
+    "postal_code_of_buyer": {
+      "type": ["null", "string"]
+    },
+    "country_of_buyer": {
+      "type": ["null", "string"]
+    },
+    "base_plan_id": {
+      "type": ["null", "string"]
+    },
+    "offer_id": {
+      "type": ["null", "string"]
+    },
+    "group_id": {
+      "type": ["null", "string"]
+    },
+    "first_usd_1m_eligible": {
+      "type": ["null", "string"]
+    },
+    "promotion_id": {
+      "type": ["null", "string"]
+    },
+    "coupon_value": {
+      "type": ["null", "string"]
+    },
+    "discount_rate": {
+      "type": ["null", "string"]
+    }
+  }
+}
